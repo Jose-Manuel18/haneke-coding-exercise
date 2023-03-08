@@ -9,7 +9,13 @@ import { SplashScreen, Stack } from "expo-router"
 import { useEffect } from "react"
 import { useColorScheme } from "react-native"
 import ComponentsProvider from "../src/components/ComponentsProvider"
-
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
+import {
+  ApolloClient,
+  ApolloProvider,
+  gql,
+  InMemoryCache,
+} from "@apollo/client"
 export {
   // Catch any errors thrown by the Layout component.
   ErrorBoundary,
@@ -17,7 +23,7 @@ export {
 
 export const unstable_settings = {
   // Ensure that reloading on `/modal` keeps a back button present.
-  initialRouteName: "spaceTour",
+  initialRouteName: "(spaceTour)/index",
 }
 
 export default function RootLayout() {
@@ -39,18 +45,31 @@ export default function RootLayout() {
     </>
   )
 }
-
+const queryClient = new QueryClient()
 function RootLayoutNav() {
   const colorScheme = useColorScheme()
+  const client = new ApolloClient({
+    uri: "https://api.spacex.land/graphql/",
+    cache: new InMemoryCache(),
+  })
 
   return (
-    <ComponentsProvider>
-      <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-        <Stack>
-          <Stack.Screen name="spaceTour" options={{ headerShown: false }} />
-          <Stack.Screen name="modal" options={{ presentation: "modal" }} />
-        </Stack>
-      </ThemeProvider>
-    </ComponentsProvider>
+    <ApolloProvider client={client}>
+      <QueryClientProvider client={queryClient}>
+        <ComponentsProvider>
+          <ThemeProvider
+            value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+          >
+            <Stack>
+              <Stack.Screen
+                name="(spaceTour)"
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen name="modal" options={{ presentation: "modal" }} />
+            </Stack>
+          </ThemeProvider>
+        </ComponentsProvider>
+      </QueryClientProvider>
+    </ApolloProvider>
   )
 }

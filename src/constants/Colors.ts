@@ -10,6 +10,7 @@ export default {
     tabIconSelected: tintColorLight,
     blueBackground: "#193247",
     searchButton: searchButton,
+    listText: "#606060",
   },
   dark: {
     text: "#fff",
@@ -19,5 +20,6 @@ export default {
     tabIconSelected: tintColorDark,
     blueBackground: "#193247",
     searchButton: searchButton,
+    listText: "#606060",
   },
 }

@@ -1,20 +1,24 @@
 import { Image, View, Text, Animated } from "react-native"
-import { useRouter } from "expo-router"
 import { SafeAreaView } from "react-native-safe-area-context"
 import styled from "styled-components/native"
-import { Block, DropDownMenu, Icon, SearchButton } from "../../src/components"
+import {
+  Block,
+  DropDownMenu,
+  Icon,
+  LaunchesScreen,
+  SearchBar,
+  Button,
+} from "../../src/components"
 import Colors from "../../src/constants/Colors"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 
-import { ListContainer } from "../../src/components/ListContainer"
-import { SearchBar } from "../../src/components/SearchBar"
-import { gql, useQuery } from "@apollo/client"
 export interface ParameterStateProps {
   name: string
   parameter: string
 }
 export default function TabOneScreen() {
   const [showDropDown, setShowDropDown] = useState(false)
+  const [loadMore, setLoadMore] = useState(false)
   const [search, setSearch] = useState("")
   const [shouldSearch, setShouldSearch] = useState(false)
   const [rotation, setRotation] = useState<number>(0)
@@ -22,17 +26,6 @@ export default function TabOneScreen() {
     name: "ROCKET NAME",
     parameter: "rockets",
   })
-  const LAUNCHES_QUERY = gql`
-    query LaunchesQuery {
-      launches {
-        mission_name
-        launch_date_local
-        launch_success
-      }
-    }
-  `
-  const { loading, error, data } = useQuery(LAUNCHES_QUERY)
-  console.log(data)
 
   return (
     <SafeAreaView
@@ -144,27 +137,8 @@ export default function TabOneScreen() {
         </OuterContainer>
         <Block size={24} />
         <ContentContainer>
-          {/* <PaginationExample /> */}
-          <ListContainer
-            shouldSearch={shouldSearch}
-            search={search}
-            parameterName={parameter.name}
-            parameter={parameter.parameter}
-          />
+          <LaunchesScreen parameterName={parameter.name} />
         </ContentContainer>
-        <PaginationContainer>
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <Text>6 of 49</Text>
-            <Block flex />
-            <SearchButton />
-          </View>
-        </PaginationContainer>
       </Container>
     </SafeAreaView>
   )
@@ -173,14 +147,10 @@ export default function TabOneScreen() {
 const ArrowContainer = styled(Animated.View)<{ rotation: number }>`
   transform: ${({ rotation }) => `rotate(${rotation}deg)`};
 `
-const PaginationContainer = styled.View`
-  align-items: center;
-  justify-content: center;
-  align-items: center;
-  height: 80px;
-`
+
 const ContentContainer = styled.View`
   align-items: center;
+
   flex: 1;
   overflow-y: scroll;
 `

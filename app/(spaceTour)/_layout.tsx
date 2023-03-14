@@ -29,6 +29,7 @@ export default function StackLayout() {
       <Stack.Screen
         name="two"
         options={{
+          headerShown: false,
           title: "Tab Two",
         }}
       />

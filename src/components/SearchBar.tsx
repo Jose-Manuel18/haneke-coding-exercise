@@ -1,7 +1,7 @@
 import { View, Text } from "./Themed"
 import { FlatList, Image } from "react-native"
 import styled from "styled-components/native"
-import { SearchButton } from "./SearchButton"
+import { Button } from "./Button"
 import { Block } from "./Block"
 import Colors from "../constants/Colors"
 import { useEffect, useRef, useState } from "react"
@@ -65,7 +65,9 @@ export function SearchBar({
         />
       </SearchInputContainer>
       <Block width={24} />
-      <SearchButton onPress={() => setShouldSearch(true)} />
+      <Button width={98} height={33} onPress={() => setShouldSearch(true)}>
+        SEARCH
+      </Button>
       {/* <FlatList
         data={filteredData}
         keyExtractor={(item, index) => index.toString()}

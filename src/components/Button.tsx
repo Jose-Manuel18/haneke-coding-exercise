@@ -8,10 +8,15 @@ import {
 } from "react-native"
 import { useState } from "react"
 import Colors from "../constants/Colors"
+import styled from "styled-components/native"
 interface Props {
   onPress?(event: GestureResponderEvent): void
+  children: React.ReactNode
+  disabled?: boolean
+  width: number
+  height: number
 }
-export function SearchButton({ onPress }: Props) {
+export function Button({ onPress, children, disabled, height, width }: Props) {
   const [scaleAnimation] = useState(new Animated.Value(1))
 
   const handlePressIn = () => {
@@ -34,32 +39,30 @@ export function SearchButton({ onPress }: Props) {
     transform: [{ scale: scaleAnimation }],
   }
   return (
-    <Animated.View style={[styles.container, animatedStyles]}>
-      <Pressable
-        style={styles.button}
+    <Animated.View style={[{ flex: 1 }, animatedStyles]}>
+      <Container
         onPressIn={handlePressIn}
         onPressOut={handlePressOut}
         onPress={onPress}
+        disabled={disabled}
+        width={width}
+        height={height}
       >
-        <Text style={[styles.buttonText]}>Search</Text>
-      </Pressable>
+        <ButtonText>{children}</ButtonText>
+      </Container>
     </Animated.View>
   )
 }
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  button: {
-    backgroundColor: Colors.dark.searchButton,
-    height: 32,
-    width: 98,
-    borderRadius: 40,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  buttonText: {
-    color: "#fff",
-    fontWeight: "bold",
-  },
-})
+const Container = styled(Pressable)<{ width: number; height: number }>`
+  background-color: ${(p) => (p.disabled ? "grey" : Colors.dark.searchButton)};
+  height: ${(p) => p.height}px;
+  width: ${(p) => p.width}px;
+  border-radius: 40px;
+  justify-content: center;
+  align-items: center;
+`
+
+const ButtonText = styled.Text`
+  color: #fff;
+  font-weight: bold;
+`

@@ -24,13 +24,14 @@ export default function StackLayout() {
         name="index"
         options={{
           headerShown: false,
+          title: "home",
         }}
       />
       <Stack.Screen
-        name="two"
+        name="ticket"
         options={{
           headerShown: false,
-          title: "Tab Two",
+          title: "ticket",
         }}
       />
     </Stack>

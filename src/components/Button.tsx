@@ -5,18 +5,35 @@ import {
   Animated,
   Pressable,
   GestureResponderEvent,
+  ActivityIndicator,
+  ViewStyle,
+  StyleProp,
+  TextStyle,
+  Easing,
 } from "react-native"
 import { useState } from "react"
 import Colors from "../constants/Colors"
 import styled from "styled-components/native"
+
 interface Props {
   onPress?(event: GestureResponderEvent): void
   children: React.ReactNode
   disabled?: boolean
   width: number
   height: number
+  isLoading?: boolean
+  style?: TextStyle
 }
-export function Button({ onPress, children, disabled, height, width }: Props) {
+
+export function Button({
+  onPress,
+  children,
+  disabled,
+  height,
+  width,
+  isLoading = false,
+  style,
+}: Props) {
   const [scaleAnimation] = useState(new Animated.Value(1))
 
   const handlePressIn = () => {
@@ -38,21 +55,28 @@ export function Button({ onPress, children, disabled, height, width }: Props) {
   const animatedStyles = {
     transform: [{ scale: scaleAnimation }],
   }
+
   return (
     <Animated.View style={[{ flex: 1 }, animatedStyles]}>
       <Container
         onPressIn={handlePressIn}
         onPressOut={handlePressOut}
         onPress={onPress}
-        disabled={disabled}
+        disabled={disabled || isLoading}
         width={width}
         height={height}
+        style={style}
       >
-        <ButtonText>{children}</ButtonText>
+        {isLoading ? (
+          <ActivityIndicator color="#fff" />
+        ) : (
+          <ButtonText>{children}</ButtonText>
+        )}
       </Container>
     </Animated.View>
   )
 }
+
 const Container = styled(Pressable)<{ width: number; height: number }>`
   background-color: ${(p) => (p.disabled ? "grey" : Colors.dark.searchButton)};
   height: ${(p) => p.height}px;

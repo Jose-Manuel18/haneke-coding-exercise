@@ -1,16 +1,16 @@
-import { Image, View, Text, Animated } from "react-native"
+import { useState } from "react"
+import { Animated, Image, Text, View } from "react-native"
 import { SafeAreaView } from "react-native-safe-area-context"
 import styled from "styled-components/native"
 import {
   Block,
+  Button,
   DropDownMenu,
   Icon,
-  LaunchesScreen,
+  ListContainer,
   SearchBar,
-  Button,
 } from "../../src/components"
 import Colors from "../../src/constants/Colors"
-import { useState } from "react"
 
 export interface ParameterStateProps {
   name: string
@@ -18,7 +18,7 @@ export interface ParameterStateProps {
 }
 export default function TabOneScreen() {
   const [showDropDown, setShowDropDown] = useState(false)
-  const [loadMore, setLoadMore] = useState(false)
+  const [sort, setSort] = useState(false)
   const [search, setSearch] = useState("")
   const [shouldSearch, setShouldSearch] = useState(false)
   const [rotation, setRotation] = useState<number>(0)
@@ -26,37 +26,37 @@ export default function TabOneScreen() {
     name: "ROCKET NAME",
     parameter: "rockets",
   })
+  console.log("shouldSearch", shouldSearch)
 
   return (
     <SafeAreaView
+      edges={["bottom"]}
       style={{
         flex: 1,
         backgroundColor: Colors.dark.background,
       }}
     >
+      <SafeAreaView
+        edges={["top"]}
+        style={{ flex: 0, backgroundColor: Colors.dark.blueBackground }}
+      />
       <Header>
         <PlanetContainer>
           <Block size={6} />
           <Image
-            source={{
-              uri: "https://cdn.zeplin.io/6369325b403d1716dd82bf01/assets/fd741e80-51b6-404f-b38c-84100f868a70.svg",
-            }}
+            source={require("../../assets/images/haneke-images/planet-photo/drawable-hdpi/planet.png")}
             style={{ width: 37, height: 40 }}
           />
         </PlanetContainer>
         <MiddleContainer>
           <Image
-            source={{
-              uri: "https://cdn.zeplin.io/6369325b403d1716dd82bf01/assets/b7fce7da-3cfc-4c11-ac00-05cd93d795f2.svg",
-            }}
+            source={require("../../assets/images/haneke-images/logo-photo/drawable-xhdpi/logo.png")}
             style={{ width: 182, height: 95 }}
           />
         </MiddleContainer>
         <RocketContainer>
           <Image
-            source={{
-              uri: "https://cdn.zeplin.io/6369325b403d1716dd82bf01/assets/961bce9e-804a-4b16-8034-d92c69d333d7.svg",
-            }}
+            source={require("../../assets/images/haneke-images/rocket-photo/drawable-xhdpi/rocket.png")}
             style={{ width: 66, height: 152 }}
           />
         </RocketContainer>
@@ -65,9 +65,7 @@ export default function TabOneScreen() {
       <Container>
         <BannerContainer>
           <Image
-            source={{
-              uri: "https://cdn.zeplin.io/6369325b403d1716dd82bf01/assets/0765d06a-b872-448b-89ef-df1a59686066.svg",
-            }}
+            source={require("../../assets/images/haneke-images/banner-photo/drawable-xhdpi/banner.png")}
             style={{ width: 268, height: 40 }}
           />
         </BannerContainer>
@@ -106,12 +104,14 @@ export default function TabOneScreen() {
                 color={Colors.dark.blueBackground}
                 size={24}
                 onPress={() => {
-                  Animated.timing(new Animated.Value(rotation), {
-                    toValue: rotation,
-                    duration: 100,
-                    useNativeDriver: true,
-                  }).start()
+                  !sort &&
+                    Animated.timing(new Animated.Value(rotation), {
+                      toValue: rotation,
+                      duration: 100,
+                      useNativeDriver: true,
+                    }).start()
                   setRotation(rotation + 180)
+                  setSort(!sort)
                 }}
               />
             </ArrowContainer>
@@ -137,7 +137,12 @@ export default function TabOneScreen() {
         </OuterContainer>
         <Block size={24} />
         <ContentContainer>
-          <LaunchesScreen parameterName={parameter.name} />
+          <ListContainer
+            shouldSearch={shouldSearch}
+            search={search}
+            sort={sort}
+            parameterName={parameter.name}
+          />
         </ContentContainer>
       </Container>
     </SafeAreaView>
@@ -150,9 +155,6 @@ const ArrowContainer = styled(Animated.View)<{ rotation: number }>`
 
 const ContentContainer = styled.View`
   align-items: center;
-
-  flex: 1;
-  overflow-y: scroll;
 `
 const OuterContainer = styled.View`
   position: relative;

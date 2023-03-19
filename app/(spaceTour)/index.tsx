@@ -21,12 +21,12 @@ export default function TabOneScreen() {
   const [sort, setSort] = useState(false)
   const [search, setSearch] = useState("")
   const [shouldSearch, setShouldSearch] = useState(false)
-  const [rotation, setRotation] = useState<number>(0)
+
+  const [rotateAnimation, setRotateAnimation] = useState(new Animated.Value(0))
   const [parameter, setParameter] = useState<ParameterStateProps>({
     name: "ROCKET NAME",
     parameter: "rockets",
   })
-  console.log("shouldSearch", shouldSearch)
 
   return (
     <SafeAreaView
@@ -98,19 +98,29 @@ export default function TabOneScreen() {
             >
               {parameter.name}
             </Text>
-            <ArrowContainer rotation={rotation}>
+            <ArrowContainer
+              style={{
+                transform: [
+                  {
+                    rotate: rotateAnimation.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: ["0deg", "180deg"],
+                    }),
+                  },
+                ],
+              }}
+            >
               <Icon
                 name="arrow-down"
                 color={Colors.dark.blueBackground}
                 size={24}
                 onPress={() => {
-                  !sort &&
-                    Animated.timing(new Animated.Value(rotation), {
-                      toValue: rotation,
-                      duration: 100,
-                      useNativeDriver: true,
-                    }).start()
-                  setRotation(rotation + 180)
+                  Animated.timing(rotateAnimation, {
+                    toValue: sort ? 0 : 1,
+                    duration: 300,
+                    useNativeDriver: true,
+                  }).start()
+
                   setSort(!sort)
                 }}
               />
@@ -149,9 +159,7 @@ export default function TabOneScreen() {
   )
 }
 
-const ArrowContainer = styled(Animated.View)<{ rotation: number }>`
-  transform: ${({ rotation }) => `rotate(${rotation}deg)`};
-`
+const ArrowContainer = styled(Animated.View)``
 
 const ContentContainer = styled.View`
   align-items: center;

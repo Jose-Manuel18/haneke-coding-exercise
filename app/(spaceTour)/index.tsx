@@ -21,8 +21,7 @@ export default function TabOneScreen() {
   const [sort, setSort] = useState(false)
   const [search, setSearch] = useState("")
   const [shouldSearch, setShouldSearch] = useState(false)
-
-  const [rotateAnimation, setRotateAnimation] = useState(new Animated.Value(0))
+  const [rotateAnimation] = useState(new Animated.Value(0))
   const [parameter, setParameter] = useState<ParameterStateProps>({
     name: "ROCKET NAME",
     parameter: "rockets",
@@ -41,34 +40,34 @@ export default function TabOneScreen() {
         style={{ flex: 0, backgroundColor: Colors.dark.blueBackground }}
       />
       <Header>
-        <PlanetContainer>
+        <View style={{ flex: 1, alignItems: "center" }}>
           <Block size={6} />
           <Image
             source={require("../../assets/images/haneke-images/planet-photo/drawable-hdpi/planet.png")}
             style={{ width: 37, height: 40 }}
           />
-        </PlanetContainer>
-        <MiddleContainer>
+        </View>
+        <View style={{ flex: 2, justifyContent: "center" }}>
           <Image
             source={require("../../assets/images/haneke-images/logo-photo/drawable-xhdpi/logo.png")}
             style={{ width: 182, height: 95 }}
           />
-        </MiddleContainer>
-        <RocketContainer>
+        </View>
+        <View style={{ flex: 1, alignItems: "flex-end", bottom: -8 }}>
           <Image
             source={require("../../assets/images/haneke-images/rocket-photo/drawable-xhdpi/rocket.png")}
             style={{ width: 66, height: 152 }}
           />
-        </RocketContainer>
+        </View>
       </Header>
       <Block size={24} />
       <Container>
-        <BannerContainer>
+        <View style={{ alignItems: "center" }}>
           <Image
             source={require("../../assets/images/haneke-images/banner-photo/drawable-xhdpi/banner.png")}
             style={{ width: 268, height: 40 }}
           />
-        </BannerContainer>
+        </View>
 
         <Block size={24} />
         <SearchBar
@@ -78,8 +77,8 @@ export default function TabOneScreen() {
           parameterName={parameter.name}
         />
         <Block size={16} />
-        <OuterContainer>
-          <FilterContainer>
+        <View style={{ position: "relative", zIndex: 9999 }}>
+          <View style={{ flexDirection: "row" }}>
             <Icon
               style={{ paddingLeft: 8 }}
               name="filter"
@@ -98,7 +97,7 @@ export default function TabOneScreen() {
             >
               {parameter.name}
             </Text>
-            <ArrowContainer
+            <Animated.View
               style={{
                 transform: [
                   {
@@ -124,10 +123,10 @@ export default function TabOneScreen() {
                   setSort(!sort)
                 }}
               />
-            </ArrowContainer>
+            </Animated.View>
 
             <Block flex />
-          </FilterContainer>
+          </View>
 
           <DropDownMenu
             setParameter={(e) => setParameter(e)}
@@ -144,34 +143,21 @@ export default function TabOneScreen() {
               borderRadius: 40,
             }}
           />
-        </OuterContainer>
+        </View>
         <Block size={24} />
-        <ContentContainer>
+        <View style={{ alignItems: "center" }}>
           <ListContainer
             shouldSearch={shouldSearch}
             search={search}
             sort={sort}
             parameterName={parameter.name}
           />
-        </ContentContainer>
+        </View>
       </Container>
     </SafeAreaView>
   )
 }
 
-const ArrowContainer = styled(Animated.View)``
-
-const ContentContainer = styled.View`
-  align-items: center;
-`
-const OuterContainer = styled.View`
-  position: relative;
-  z-index: 9999;
-`
-
-const FilterContainer = styled.View`
-  flex-direction: row;
-`
 const Header = styled.View`
   flex-direction: row;
   justify-content: center;
@@ -183,20 +169,4 @@ const Container = styled.View`
   flex: 1;
   background-color: ${(p) => p.theme.colors.background};
   padding: 0px 16px;
-`
-const PlanetContainer = styled.View`
-  flex: 1;
-  align-items: center;
-`
-const MiddleContainer = styled.View`
-  flex: 2;
-  justify-content: center;
-`
-const RocketContainer = styled.View`
-  flex: 1;
-  align-items: flex-end;
-  bottom: -8px;
-`
-const BannerContainer = styled.View`
-  align-items: center;
 `

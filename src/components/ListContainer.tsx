@@ -142,24 +142,27 @@ export const ListContainer = ({
   useEffect(() => {
     if (!sort) {
       if (result) {
-        setShuffledData(shuffle([...result]))
+        const firstFiveItems = result.slice(0, 5)
+        const remainingItems = result.slice(5)
+        const shuffledItems = shuffle([...remainingItems])
+        setShuffledData([...firstFiveItems, ...shuffledItems])
       }
     } else {
       setShuffledData(result ?? [])
     }
   }, [sort, result])
 
-  const handleLoadMore = () => {
+  const handleLoadMore = async () => {
     if (!sort) {
-      fetchNextPage().then(() => {
-        if (data) {
-          const newData = data.pages.flat()
-          const lastFiveItems = newData.slice(-5)
-          const shuffledLastFiveItems = shuffle([...lastFiveItems])
-          newData.splice(-5, 5, ...shuffledLastFiveItems)
-          setShuffledData(newData)
-        }
-      })
+      const prevDataLength = shuffledData.length || 0
+      await fetchNextPage()
+      if (data) {
+        const newData = data.pages.flat()
+        const newItems = newData.slice(prevDataLength)
+        const shuffledNewItems = shuffle(newItems)
+        const combinedData = [...shuffledData, ...shuffledNewItems]
+        setShuffledData(combinedData)
+      }
     } else {
       fetchNextPage()
     }
@@ -167,8 +170,6 @@ export const ListContainer = ({
 
   if (isLoading) return <Loader />
   if (isError) return <Text>Error</Text>
-  // console.log("search:", search)
-  // console.log("filteredResults:", filteredResults)
 
   return (
     <View

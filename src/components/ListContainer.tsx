@@ -135,7 +135,7 @@ export const ListContainer = ({
   }, [parameterName, data])
 
   const filteredResults = result?.filter((item) => {
-    return item.value.includes(search.toLowerCase())
+    return item.value.toLowerCase().includes(search.toLowerCase())
   })
   const [shuffledData, setShuffledData] = useState<any[]>([])
 

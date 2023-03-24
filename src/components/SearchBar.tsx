@@ -1,42 +1,20 @@
-import { View, Text } from "./Themed"
-import { FlatList, Image } from "react-native"
-import styled from "styled-components/native"
-import { Button } from "./Button"
-import { Block } from "./Block"
-import Colors from "../constants/Colors"
-import { useEffect, useRef, useState } from "react"
-import { useQuery } from "@tanstack/react-query"
-import axios from "axios"
+import { View } from "./Themed";
+import { Image } from "react-native";
+import styled from "styled-components/native";
+import { Button } from "./Button";
+import { Block } from "./Block";
+import Colors from "../constants/Colors";
+import { useSearchContext } from "../context/SearchContext";
+
 interface ListContainerProps {
-  parameter: string
-  parameterName: string
-  setSearch: (value: string) => void
-  setShouldSearch: (value: boolean) => void
+  parameter: string;
+  setResult: (value: string) => void;
 }
 
-interface SpaceXList {
-  description?: string
-  mission_id?: string
-  mission_name?: string
-  rocket_id?: string
-  rocket_name?: string
-  rocket_type?: string
-  launch_year?: string
-}
-
-interface TanStackProps {
-  data: SpaceXList[]
-}
-export function SearchBar({
-  parameter,
-  parameterName,
-  setSearch,
-  setShouldSearch,
-}: ListContainerProps) {
-  const { data, isLoading, error } = useQuery<TanStackProps>(
-    ["spaceXList", parameter],
-    () => axios.get(`https://api.spacexdata.com/v3/${parameter}`),
-  )
+export function SearchBar({ parameter, setResult }: ListContainerProps) {
+  // const [search, setSearch] = useState("");
+  const { search, setSearch } = useSearchContext();
+  console.log(search);
 
   return (
     <View style={{ flexDirection: "row" }}>
@@ -54,20 +32,20 @@ export function SearchBar({
           />
         </View>
         <Input
+          value={search}
           onChangeText={(e) => {
-            setSearch(e)
-            setShouldSearch(false)
+            setSearch(e);
           }}
           placeholder={`Search for ${parameter} `}
           placeholderTextColor={Colors.dark.background}
         />
       </SearchInputContainer>
       <Block width={24} />
-      <Button width={98} height={33} onPress={() => setShouldSearch(true)}>
+      <Button width={98} height={33} onPress={() => setResult(search)}>
         SEARCH
       </Button>
     </View>
-  )
+  );
 }
 
 const SearchInputContainer = styled.View`
@@ -77,8 +55,8 @@ const SearchInputContainer = styled.View`
   flex-direction: row;
   justify-content: flex-start;
   border-radius: 40px;
-`
+`;
 const Input = styled.TextInput`
   color: ${(props) => props.theme.colors.background};
   text-align: center;
-`
+`;

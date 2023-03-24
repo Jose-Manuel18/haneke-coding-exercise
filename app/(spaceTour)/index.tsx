@@ -1,31 +1,30 @@
-import { useState } from "react"
-import { Animated, Image, Text, View } from "react-native"
-import { SafeAreaView } from "react-native-safe-area-context"
-import styled from "styled-components/native"
+import { useState } from "react";
+import { Animated, Image, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import styled from "styled-components/native";
 import {
   Block,
-  Button,
   DropDownMenu,
   Icon,
   ListContainer,
   SearchBar,
-} from "../../src/components"
-import Colors from "../../src/constants/Colors"
+} from "../../src/components";
+import Colors from "../../src/constants/Colors";
 
 export interface ParameterStateProps {
-  name: string
-  parameter: string
+  name: string;
+  parameter: string;
 }
 export default function TabOneScreen() {
-  const [showDropDown, setShowDropDown] = useState(false)
-  const [sort, setSort] = useState(false)
-  const [search, setSearch] = useState("")
-  const [shouldSearch, setShouldSearch] = useState(false)
-  const [rotateAnimation] = useState(new Animated.Value(0))
+  const [showDropDown, setShowDropDown] = useState(false);
+  const [sort, setSort] = useState(false);
+
+  const [result, setResult] = useState("");
+  const [rotateAnimation] = useState(new Animated.Value(0));
   const [parameter, setParameter] = useState<ParameterStateProps>({
     name: "ROCKET NAME",
     parameter: "rockets",
-  })
+  });
 
   return (
     <SafeAreaView
@@ -71,10 +70,8 @@ export default function TabOneScreen() {
 
         <Block size={24} />
         <SearchBar
-          setShouldSearch={setShouldSearch}
-          setSearch={(e) => setSearch(e)}
+          setResult={(e) => setResult(e)}
           parameter={parameter.parameter}
-          parameterName={parameter.name}
         />
         <Block size={16} />
         <View style={{ position: "relative", zIndex: 9999 }}>
@@ -118,9 +115,9 @@ export default function TabOneScreen() {
                     toValue: sort ? 0 : 1,
                     duration: 300,
                     useNativeDriver: true,
-                  }).start()
+                  }).start();
 
-                  setSort(!sort)
+                  setSort(!sort);
                 }}
               />
             </Animated.View>
@@ -147,15 +144,14 @@ export default function TabOneScreen() {
         <Block size={24} />
         <View style={{ alignItems: "center" }}>
           <ListContainer
-            shouldSearch={shouldSearch}
-            search={search}
+            result={result}
             sort={sort}
             parameterName={parameter.name}
           />
         </View>
       </Container>
     </SafeAreaView>
-  )
+  );
 }
 
 const Header = styled.View`
@@ -164,9 +160,9 @@ const Header = styled.View`
   background-color: ${(props) => props.theme.colors.blueBackground};
   height: 141px;
   width: 100%;
-`
+`;
 const Container = styled.View`
   flex: 1;
   background-color: ${(p) => p.theme.colors.background};
   padding: 0px 16px;
-`
+`;

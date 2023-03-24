@@ -1,66 +1,60 @@
-import { FlatList, Switch, Text, View } from "react-native"
+import { FlatList, Text, View } from "react-native";
 
-import { useInfiniteQuery } from "@tanstack/react-query"
-import styled from "styled-components/native"
-import Colors from "../constants/Colors"
-import { useEffect, useMemo, useState } from "react"
-import { Button } from "./Button"
-import { Block } from "./Block"
-import { Icon } from "./Icon"
-import { useRouter } from "expo-router"
-import { Loader } from "./Loader"
+import { useInfiniteQuery } from "@tanstack/react-query";
+import styled from "styled-components/native";
+import Colors from "../constants/Colors";
+import { useEffect, useMemo, useState } from "react";
+import { Button } from "./Button";
+import { Block } from "./Block";
+import { Icon } from "./Icon";
+import { useRouter } from "expo-router";
+import { Loader } from "./Loader";
+
 interface fetchProps {
-  _id: string
-  flight_number: number
-  mission_name: string
-  launch_year: string
-  rocket: rocketProps
+  _id: string;
+  flight_number: number;
+  mission_name: string;
+  launch_year: string;
+  rocket: rocketProps;
 }
 interface rocketProps {
-  rocket_type: string
-  rocket_name: string
+  rocket_type: string;
+  rocket_name: string;
 }
 interface Props {
-  parameterName: string
-  sort: boolean
-  search: string
-  shouldSearch: boolean
+  parameterName: string;
+  sort: boolean;
+  result: string;
 }
 
-export const ListContainer = ({
-  parameterName,
-  sort,
-  shouldSearch,
-  search,
-}: Props) => {
-  const [isPressed, setIsPressed] = useState<number | null>(null)
-  const [newResults, setNewResults] = useState<any[]>([])
-  const [initialData, setInitialData] = useState(null)
-  const [totalCount, setTotalCount] = useState([0])
+export const ListContainer = ({ parameterName, sort, result }: Props) => {
+  const [isPressed, setIsPressed] = useState<string | null>(null);
+  const [initialData, setInitialData] = useState(null);
+  const [totalCount, setTotalCount] = useState([0]);
 
-  const { push } = useRouter()
+  const { push } = useRouter();
   const fetchData = async ({ pageParam = 0, countOnly = false }) => {
-    const limit = 5
+    const limit = 5;
     const response = await fetch(
       `https://api.spacexdata.com/v3/launches?id=true&offset=${pageParam}&limit=${limit}${
         countOnly ? "&countOnly=true" : ""
       }`,
-    )
+    );
 
-    return response.json()
-  }
+    return response.json();
+  };
   useEffect(() => {
-    ;(async () => {
+    (async () => {
       const countResponse = await fetch(
         "https://api.spacexdata.com/v3/launches",
-      )
-      const totalCount = await countResponse.json()
-      setTotalCount(totalCount)
+      );
+      const totalCount = await countResponse.json();
+      setTotalCount(totalCount);
 
-      const initialDataResponse = await fetchData({ pageParam: 0 })
-      setInitialData(initialDataResponse)
-    })()
-  }, [])
+      const initialDataResponse = await fetchData({ pageParam: 0 });
+      setInitialData(initialDataResponse);
+    })();
+  }, []);
   const {
     data,
     fetchNextPage,
@@ -74,102 +68,107 @@ export const ListContainer = ({
         return {
           pages: [initialData],
           pageParams: [0],
-        }
+        };
       }
-      return undefined
+      return undefined;
     },
     getNextPageParam: (lastPage, pages) => {
       if (lastPage.length < 5) {
-        return null
+        return null;
       }
-      return pages.length * 5
+      return pages.length * 5;
     },
-  })
+  });
 
   // const [shuffledData, setShuffledData] = useState<any[]>([])
   function shuffle<T>(array: T[]): T[] {
     for (let i = array.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1))
-      ;[array[i], array[j]] = [array[j], array[i]]
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
     }
-    return array
+    return array;
   }
 
-  const renderedItems = data && data.pages.flat().length
-  const totalItems = totalCount.length
+  const renderedItems = data && data.pages.flat().length;
+  const totalItems = totalCount.length;
 
-  const result = useMemo(() => {
+  const fetchedResult = useMemo(() => {
     const commonProps = (item: fetchProps) => ({
       id: item._id,
       rocketType: item.rocket.rocket_type,
       rocketName: item.rocket.rocket_name,
       launchYear: item.launch_year,
       missionName: item.mission_name,
-    })
+    });
 
     switch (parameterName) {
       default:
         return data?.pages.flat().map((item) => ({
           ...commonProps(item),
           value: item.rocket.rocket_name,
-        }))
+        }));
 
       case "LAUNCH YEAR":
         return data?.pages.flat().map((item) => ({
           ...commonProps(item),
           value: item.launch_year,
-        }))
+        }));
 
       case "MISSION NAME":
         return data?.pages.flat().map((item) => ({
           ...commonProps(item),
           value: item.mission_name,
-        }))
+        }));
 
       case "ROCKET TYPE":
         return data?.pages.flat().map((item) => ({
           ...commonProps(item),
           value: item.rocket.rocket_type,
-        }))
+        }));
     }
-  }, [parameterName, data])
+  }, [parameterName, data]);
 
-  const filteredResults = result?.filter((item) => {
-    return item.value.toLowerCase().includes(search.toLowerCase())
-  })
-  const [shuffledData, setShuffledData] = useState<any[]>([])
+  const filteredResults = useMemo(() => {
+    return fetchedResult?.filter((item) => {
+      return item.value.toLowerCase().includes(result.toLowerCase());
+    });
+  }, [fetchedResult, result]);
+
+  const [shuffledData, setShuffledData] = useState<any[]>([]);
 
   useEffect(() => {
     if (!sort) {
-      if (result) {
-        const firstFiveItems = result.slice(0, 5)
-        const remainingItems = result.slice(5)
-        const shuffledItems = shuffle([...remainingItems])
-        setShuffledData([...firstFiveItems, ...shuffledItems])
+      if (fetchedResult) {
+        const firstFiveItems = fetchedResult.slice(0, 5);
+        const remainingItems = fetchedResult.slice(5);
+        const shuffledItems = shuffle([...remainingItems]);
+        setShuffledData([...firstFiveItems, ...shuffledItems]);
       }
     } else {
-      setShuffledData(result ?? [])
+      setShuffledData(fetchedResult ?? []);
     }
-  }, [sort, result])
+  }, [sort, fetchedResult]);
 
   const handleLoadMore = async () => {
     if (!sort) {
-      const prevDataLength = shuffledData.length || 0
-      await fetchNextPage()
+      const prevDataLength = shuffledData.length || 0;
+      await fetchNextPage();
       if (data) {
-        const newData = data.pages.flat()
-        const newItems = newData.slice(prevDataLength)
-        const shuffledNewItems = shuffle(newItems)
-        const combinedData = [...shuffledData, ...shuffledNewItems]
-        setShuffledData(combinedData)
+        const newData = data.pages.flat();
+        const newItems = newData.slice(prevDataLength);
+        const shuffledNewItems = shuffle(newItems);
+        const combinedData = [...shuffledData, ...shuffledNewItems];
+        setShuffledData(combinedData);
       }
     } else {
-      fetchNextPage()
+      fetchNextPage();
     }
-  }
+  };
 
-  if (isLoading) return <Loader />
-  if (isError) return <Text>Error</Text>
+  console.log("result:", result);
+
+  if (isLoading) return <Loader />;
+  if (isError) return <Text>Error</Text>;
 
   return (
     <View
@@ -184,11 +183,11 @@ export const ListContainer = ({
         }}
       >
         <FlatList
-          data={shouldSearch ? filteredResults : shuffledData}
-          keyExtractor={(item, index) => index.toString()}
+          data={result ? filteredResults : shuffledData}
+          keyExtractor={(item) => item.id}
           contentContainerStyle={{ gap: 10 }}
           showsVerticalScrollIndicator={false}
-          renderItem={({ item, index }) => {
+          renderItem={({ item }) => {
             return (
               <View
                 style={{
@@ -198,17 +197,17 @@ export const ListContainer = ({
               >
                 <Container>
                   <InnerContainer
-                    pressed={isPressed === index}
+                    pressed={isPressed === item.id}
                     onPress={() => {
-                      index === isPressed
+                      item.id === isPressed
                         ? setIsPressed(null)
-                        : setIsPressed(index)
+                        : setIsPressed(item.id);
                     }}
                   >
                     <Text
                       style={{
                         color:
-                          isPressed === index
+                          isPressed === item.id
                             ? Colors.dark.text
                             : Colors.dark.listText,
                       }}
@@ -216,7 +215,7 @@ export const ListContainer = ({
                       {item.value}
                     </Text>
                   </InnerContainer>
-                  {isPressed === index && (
+                  {isPressed === item.id && (
                     <View style={{ position: "absolute", right: -56 }}>
                       <Icon
                         name="chevron-right-circle-outline"
@@ -231,14 +230,14 @@ export const ListContainer = ({
                               missionName: item.missionName,
                               rocketName: item.rocketName,
                             },
-                          })
+                          });
                         }}
                       />
                     </View>
                   )}
                 </Container>
               </View>
-            )
+            );
           }}
           ListEmptyComponent={
             filteredResults?.length === 0 ? (
@@ -273,8 +272,7 @@ export const ListContainer = ({
             fontSize: 16,
           }}
         >
-          {shouldSearch ? filteredResults?.length : renderedItems} of{" "}
-          {totalItems}
+          {result ? filteredResults?.length : renderedItems} of {totalItems}
         </Text>
         <Block width={40} />
         <Button
@@ -288,12 +286,12 @@ export const ListContainer = ({
         </Button>
       </View>
     </View>
-  )
-}
+  );
+};
 const Container = styled.View`
   flex-direction: row;
   align-items: center;
-`
+`;
 const InnerContainer = styled.TouchableOpacity<{ pressed: boolean }>`
   height: 70px;
   width: 246px;
@@ -303,4 +301,4 @@ const InnerContainer = styled.TouchableOpacity<{ pressed: boolean }>`
   justify-content: center;
   align-items: center;
   padding: 0 16px;
-`
+`;

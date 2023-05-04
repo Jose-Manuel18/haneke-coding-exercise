@@ -1,26 +1,26 @@
-import { StyleSheet, ImageBackground, Alert } from "react-native"
+import { StyleSheet, ImageBackground, Alert } from "react-native";
 
-import { View } from "../../src/components/Themed"
-import { useRouter, useSearchParams, SplashScreen } from "expo-router"
-import { Block, Button, Icon, Loader } from "../../src/components"
-import Colors from "../../src/constants/Colors"
-import styled from "styled-components/native"
-import { useState } from "react"
+import { View } from "../../src/components/Themed";
+import { useRouter, useSearchParams } from "expo-router";
+import { Block, Button, Icon, Loader } from "../../src/components";
+import Colors from "../../src/constants/Colors";
+import styled from "styled-components/native";
+import { useState } from "react";
 
 interface detailsProps {
-  id: string
-  launchYear: string
-  rocketName: string
-  rocketType: string
-  missionName: string
-  [key: string]: string | string[]
+  id: string;
+  launchYear: string;
+  rocketName: string;
+  rocketType: string;
+  missionName: string;
+  [key: string]: string | string[];
 }
 
 export default function TabTwoScreen() {
   const { launchYear, rocketType, missionName, rocketName } =
-    useSearchParams<detailsProps>()
-  const [loading, setLoading] = useState(true)
-  const { back } = useRouter()
+    useSearchParams<detailsProps>();
+  const [loading, setLoading] = useState(true);
+  const { back } = useRouter();
 
   return (
     <ImageBackground
@@ -122,14 +122,14 @@ export default function TabTwoScreen() {
         </Button>
       </View>
     </ImageBackground>
-  )
+  );
 }
 
 const Text = styled.Text<{ blue?: boolean }>`
   color: ${(p) =>
     p.blue ? Colors.dark.blueBackground : Colors.dark.background};
   font-size: 8px;
-`
+`;
 
 const styles = StyleSheet.create({
   Image: {
@@ -145,4 +145,4 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
   },
-})
+});

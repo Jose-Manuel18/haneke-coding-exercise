@@ -1,21 +1,15 @@
-import {
-  StyleSheet,
-  Modal,
-  TouchableOpacity,
-  Animated,
-  FlatList,
-} from "react-native"
-import React, { useEffect, useState } from "react"
-import { View } from "./Themed"
-import Colors from "../constants/Colors"
-import styled from "styled-components/native"
-import { ParameterStateProps } from "../../app/(spaceTour)"
-import { Block } from "./Block"
+import { Animated, FlatList } from "react-native";
+import React, { useEffect, useState } from "react";
+
+import Colors from "../constants/Colors";
+import styled from "styled-components/native";
+import { ParameterStateProps } from "../../app/(spaceTour)";
+import { Block } from "./Block";
 interface DropDownMenuProps {
-  toggleClose: (value: boolean) => void
-  setParameter: (value: ParameterStateProps) => void
-  selectedParameter?: string
-  dropDownState: boolean
+  toggleClose: (value: boolean) => void;
+  setParameter: (value: ParameterStateProps) => void;
+  selectedParameter?: string;
+  dropDownState: boolean;
 }
 
 export function DropDownMenu({
@@ -24,24 +18,24 @@ export function DropDownMenu({
   selectedParameter,
   dropDownState,
 }: DropDownMenuProps) {
-  const scaleValue = useState(new Animated.Value(0))[0]
+  const scaleValue = useState(new Animated.Value(0))[0];
 
   useEffect(() => {
     Animated.timing(scaleValue, {
       toValue: dropDownState ? 1 : 0.1,
       duration: 300,
       useNativeDriver: true,
-    }).start()
-  }, [toggleClose])
+    }).start();
+  }, [toggleClose]);
   const options = [
     { name: "ROCKET NAME", parameter: "rockets" },
     { name: "MISSION NAME", parameter: "missions" },
     { name: "LAUNCH YEAR", parameter: "launches" },
     { name: "ROCKET TYPE", parameter: "rockets" },
-  ]
+  ];
   const filteredOptions = options.filter(
     (option) => option.name !== selectedParameter,
-  )
+  );
 
   return (
     <Container>
@@ -71,15 +65,15 @@ export function DropDownMenu({
         >
           <FlatList
             data={filteredOptions}
-            keyExtractor={(item, index) => index.toString()}
+            keyExtractor={(_, index) => index.toString()}
             ItemSeparatorComponent={() => <Block size={8} />}
             scrollEnabled={false}
             renderItem={({ item }) => {
               return (
                 <InnerContainer
                   onPress={() => {
-                    setParameter(item)
-                    toggleClose(false)
+                    setParameter(item);
+                    toggleClose(false);
                   }}
                 >
                   <Text
@@ -92,20 +86,20 @@ export function DropDownMenu({
                     {item.name}
                   </Text>
                 </InnerContainer>
-              )
+              );
             }}
           />
         </Animated.View>
       )}
     </Container>
-  )
+  );
 }
 const Container = styled.View`
   flex: 1;
   left: 21px;
   top: 43px;
   position: absolute;
-`
+`;
 const InnerContainer = styled.Pressable`
   max-width: 195px;
   max-height: 53px;
@@ -115,7 +109,7 @@ const InnerContainer = styled.Pressable`
   justify-content: center;
   align-items: center;
   border-radius: 14px;
-`
+`;
 const Text = styled.Text`
   color: #000;
-`
+`;
